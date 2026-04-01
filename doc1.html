@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Retreats | Avant-Garde Villas</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231a1a1a'/><text y='75' x='25' fill='%23C4A484' font-family='serif' font-size='75' font-style='italic'>A</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">AURA <span>Retreats</span></div>
+        <ul class="nav-links">
+            <li><a href="#">Koleksiyon</a></li>
+            <li><a href="#">Deneyim</a></li>
+            <li><a href="#">İletişim</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <div class="hero-text">
+            <h1>Sınırların Ötesinde Bir Konaklama</h1>
+            <p>Mimari zarafetin doğayla buluştuğu eşsiz villalar.</p>
+        </div>
+    </header>
+
+    <section class="filter-section">
+        <div class="filter-box">
+            <select id="filter-location" onchange="filterVillas()">
+                <option value="all">Tüm Konumlar</option>
+                <option value="bodrum">Bodrum, Muğla</option>
+                <option value="kalkan">Kalkan, Antalya</option>
+                <option value="fethiye">Fethiye, Muğla</option>
+            </select>
+            
+            <select id="filter-pool" onchange="filterVillas()">
+                <option value="all">Havuz Seçeneği</option>
+                <option value="yes">Özel Havuzlu</option>
+                <option value="no">Havuzsuz (Doğa/Deniz Temalı)</option>
+            </select>
+            
+            <input type="number" id="filter-guests" placeholder="Kişi Sayısı (Örn: 4)" oninput="filterVillas()" min="1" max="12">
+        </div>
+    </section>
+
+    <section id="villa-grid" class="grid-container">
+        </section>
+
+    <div id="villa-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="modal-layout">
+                
+                <div class="modal-gallery">
+                    <img id="main-modal-img" src="" alt="Villa">
+                    <div class="thumbnail-row" id="thumbnail-container">
+                        </div>
+                </div>
+                
+                <div class="modal-details">
+                    <h2 id="modal-title">Villa Adı</h2>
+                    <p class="location" id="modal-location">Konum</p>
+                    <p class="desc">Modern mimarisi ve avangart dokunuşlarıyla ruhunuzu dinlendirecek özel bir yaşam alanı.</p>
+                    
+                    <div class="features">
+                        <span id="modal-pool">Havuz: Var</span>
+                        <span id="modal-capacity">Kapasite: 6 Kişi</span>
+                    </div>
+
+                    <div class="price-calculator">
+                        <h3>Konaklama Hesapla</h3>
+                        <label>Kişi Sayısı:</label>
+                        <input type="number" id="calc-guests" value="2" min="1" oninput="calculatePrice()">
+                        
+                        <label>Gün Sayısı:</label>
+                        <input type="number" id="calc-days" value="1" min="1" oninput="calculatePrice()">
+                        
+                        <div class="total-price">
+                            Toplam: <span id="calculated-price">$0</span>
+                        </div>
+                        <button class="btn-book">Hemen Kirala</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Villa Veri Tabanı (Objeler)
+        const villas = [
+            {
+                id: 1,
+                name: "Villa Noir",
+                location: "bodrum",
+                locationText: "Bodrum, Muğla",
+                pool: true,
+                maxGuests: 6,
+                basePricePerPerson: 150, // Kişi başı günlük taban fiyat
+                images: [
+                    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80", // Ana Foto
+                    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80", // İç Mekan 1
+                    "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=400&q=80"  // İç Mekan 2
+                ]
+            },
+            {
+                id: 2,
+                name: "Lumina House",
+                location: "kalkan",
+                locationText: "Kalkan, Antalya",
+                pool: true,
+                maxGuests: 8,
+                basePricePerPerson: 120,
+                images: [
+                    "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=400&q=80",
+                    "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=400&q=80"
+                ]
+            },
+            {
+                id: 3,
+                name: "Aetheria Forest",
+                location: "fethiye",
+                locationText: "Fethiye, Muğla",
+                pool: false,
+                maxGuests: 4,
+                basePricePerPerson: 90,
+                images: [
+                    "https://images.unsplash.com/photo-1587061949409-02df41d5e562?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=400&q=80",
+                    "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=400&q=80"
+                ]
+            },
+            {
+                id: 4,
+                name: "Opulence Cliff",
+                location: "kalkan",
+                locationText: "Kalkan, Antalya",
+                pool: true,
+                maxGuests: 10,
+                basePricePerPerson: 200,
+                images: [
+                    "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=800&q=80",
+                    "https://images.unsplash.com/photo-1613490908592-fd0f055047b5?auto=format&fit=crop&w=400&q=80",
+                    "https://images.unsplash.com/photo-1613977257592-48e02d6df388?auto=format&fit=crop&w=400&q=80"
+                ]
+            }
+        ];
+
+        let currentActiveVilla = null;
+
+        // Sayfa yüklendiğinde villaları ekrana bas
+        window.onload = () => renderVillas(villas);
+
+        function renderVillas(villaArray) {
+            const grid = document.getElementById("villa-grid");
+            grid.innerHTML = ""; // Temizle
+
+            if(villaArray.length === 0) {
+                grid.innerHTML = "<p style='color:#fff; text-align:center; width:100%;'>Kriterlerinize uygun villa bulunamadı.</p>";
+                return;
+            }
+
+            villaArray.forEach(villa => {
+                const card = document.createElement("div");
+                card.className = "villa-card";
+                card.innerHTML = `
+                    <img src="${villa.images[0]}" alt="${villa.name}">
+                    <div class="card-info">
+                        <h3>${villa.name}</h3>
+                        <p class="loc">${villa.locationText}</p>
+                        <p class="capacity">Maksimum ${villa.maxGuests} Kişi | ${villa.pool ? 'Özel Havuzlu' : 'Havuzsuz'}</p>
+                        <button class="btn-details" onclick="openModal(${villa.id})">İncele & Hesapla</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filtreleme Algoritması
+        function filterVillas() {
+            const loc = document.getElementById("filter-location").value;
+            const pool = document.getElementById("filter-pool").value;
+            const guests = parseInt(document.getElementById("filter-guests").value) || 0;
+
+            const filtered = villas.filter(villa => {
+                const locMatch = loc === "all" || villa.location === loc;
+                const poolMatch = pool === "all" || (pool === "yes" && villa.pool) || (pool === "no" && !villa.pool);
+                const guestMatch = guests === 0 || villa.maxGuests >= guests;
+                return locMatch && poolMatch && guestMatch;
+            });
+
+            renderVillas(filtered);
+        }
+
+        // Modal (Detay Ekranı) İşlemleri
+        function openModal(id) {
+            currentActiveVilla = villas.find(v => v.id === id);
+            
+            document.getElementById("modal-title").innerText = currentActiveVilla.name;
+            document.getElementById("modal-location").innerText = currentActiveVilla.locationText;
+            document.getElementById("modal-pool").innerText = currentActiveVilla.pool ? "Havuz: Var" : "Havuz: Yok";
+            document.getElementById("modal-capacity").innerText = `Kapasite: Maks ${currentActiveVilla.maxGuests} Kişi`;
+            
+            // Fiyat hesaplayıcıyı varsayılana döndür
+            document.getElementById("calc-guests").value = 2;
+            document.getElementById("calc-days").value = 1;
+            
+            // Fotoğrafları yükle
+            document.getElementById("main-modal-img").src = currentActiveVilla.images[0];
+            
+            const thumbContainer = document.getElementById("thumbnail-container");
+            thumbContainer.innerHTML = "";
+            currentActiveVilla.images.forEach(imgSrc => {
+                const img = document.createElement("img");
+                img.src = imgSrc;
+                img.className = "thumb";
+                img.onclick = () => document.getElementById("main-modal-img").src = imgSrc;
+                thumbContainer.appendChild(img);
+            });
+
+            calculatePrice(); // İlk fiyatı göster
+            document.getElementById("villa-modal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("villa-modal").style.display = "none";
+        }
+
+        // Dinamik Fiyat Algoritması: (Kişi Başı Fiyat * Kişi Sayısı * Gün) + Konum Çarpanı
+        function calculatePrice() {
+            if(!currentActiveVilla) return;
+
+            let guests = parseInt(document.getElementById("calc-guests").value) || 1;
+            let days = parseInt(document.getElementById("calc-days").value) || 1;
+
+            // Kapasite kontrolü
+            if(guests > currentActiveVilla.maxGuests) {
+                guests = currentActiveVilla.maxGuests;
+                document.getElementById("calc-guests").value = guests;
+                alert(`Bu villa maksimum ${currentActiveVilla.maxGuests} kişi alabilir.`);
+            }
+
+            let baseTotal = currentActiveVilla.basePricePerPerson * guests * days;
+            
+            // Bodrum ve Kalkan lokasyonları için %15 lüks çarpanı eklentisi (Avangart mantığı)
+            if(currentActiveVilla.location === "bodrum" || currentActiveVilla.location === "kalkan") {
+                baseTotal = baseTotal * 1.15; 
+            }
+
+            document.getElementById("calculated-price").innerText = "$" + Math.floor(baseTotal).toLocaleString('en-US');
+        }
+    </script>
+</body>
+</html>

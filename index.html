@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <!--
+    LINEN Ê — 3 dosya paketi: index.html + styles.css + app.js aynı klasörde.
+    Favicon: bu head içindeki link rel="icon" (base64 SVG, ayrı dosya yok).
+  -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LINEN Ê — Eşikteki Lüks | Villa Kiralama</title>
+  <meta name="description" content="Havuzlu ve havuzsuz seçkin villalar. Kişi sayısı ve konuma göre şeffaf fiyatlandırma." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojYzlhMjI3Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMWExYTFmIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjMGQwZDEwIi8+PHBhdGggZD0iTTE2IDQgTDI4IDE2IEwxNiAyOCBMNCAxNiBaIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjZykiIHN0cm9rZS13aWR0aD0iMS41Ii8+PGNpcmNsZSBjeD0iMTYiIGN5PSIxNiIgcj0iNCIgZmlsbD0iI2M5YTIyNyIgb3BhY2l0eT0iMC45Ii8+PC9zdmc+" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;1,6..96,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="logo" href="#">
+      <span class="logo-mark">◈</span>
+      <span class="logo-text">LINEN&nbsp;Ê</span>
+    </a>
+    <p class="tagline">Eşikteki lüks — Kaidesiz villalar</p>
+    <nav class="nav-min" aria-label="Ana">
+      <a href="#villalar">Seçkiler</a>
+      <a href="#filtre">Filtre</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero-blob" aria-hidden="true"></div>
+      <h1 class="hero-title">
+        <span class="hero-line">Konforun</span>
+        <span class="hero-line hero-line--accent">kırılma noktası</span>
+      </h1>
+      <p class="hero-lede">Havuz, konum ve misafir sayısına göre fiyat kendini yeniden yazar. Görseller tıklanır; gerçek boyutta açılır.</p>
+    </section>
+
+    <section class="controls" id="filtre" aria-labelledby="filtre-baslik">
+      <h2 id="filtre-baslik" class="visually-hidden">Filtreler ve fiyat parametreleri</h2>
+      <div class="control-grid">
+        <fieldset class="field">
+          <legend>Havuz</legend>
+          <div class="chip-row" role="group" aria-label="Havuz filtresi">
+            <label class="chip"><input type="radio" name="pool" value="all" checked /> Tümü</label>
+            <label class="chip"><input type="radio" name="pool" value="pool" /> Havuzlu</label>
+            <label class="chip"><input type="radio" name="pool" value="nopool" /> Havuzsuz</label>
+          </div>
+        </fieldset>
+
+        <label class="field field-select">
+          <span class="field-label">Konum</span>
+          <select id="filterLocation" aria-describedby="loc-hint">
+            <option value="all">Tüm bölgeler</option>
+          </select>
+          <span id="loc-hint" class="field-hint">Konuma göre çarpan uygulanır</span>
+        </label>
+
+        <div class="field field-range">
+          <label for="guestCount" class="field-label">Misafir sayısı <span id="guestValue" class="badge-num">4</span></label>
+          <input type="range" id="guestCount" min="2" max="14" value="4" step="1" />
+          <span class="field-hint">Kişi başı ve taban fiyat birleşir</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="listings" id="villalar" aria-labelledby="listings-title">
+      <div class="listings-head">
+        <h2 id="listings-title" class="section-title">Seçki</h2>
+        <p id="resultCount" class="result-meta" role="status"></p>
+      </div>
+      <div id="villaGrid" class="villa-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>LINEN Ê</strong> — Tasarım demosu. Görseller Unsplash üzerinden örnektir.</p>
+  </footer>
+
+  <dialog id="lightbox" class="lightbox" aria-label="Fotoğraf galerisi">
+    <button type="button" class="lightbox-close" id="lbClose" aria-label="Kapat">&times;</button>
+    <img id="lbImg" class="lightbox-img" src="" alt="" />
+    <div class="lightbox-cap">
+      <p id="lbCaption" class="lightbox-caption"></p>
+      <div class="lightbox-thumbs" id="lbThumbs" role="tablist"></div>
+    </div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
